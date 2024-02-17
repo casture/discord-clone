@@ -17,14 +17,22 @@ model User {
 }
 
 model Server {
-  id       Int       @id @default(autoincrement())
+  id       Int          @id @default(autoincrement())
   name     String
-  channels Channel[]
+  imageUrl String?
+  items    ServerItem[]
 }
 
-model Channel {
-  id       Int    @id @default(autoincrement())
-  name     String
-  server   Server @relation(fields: [serverId], references: [id])
-  serverId Int
+model ServerItem {
+  id         Int            @id @default(autoincrement())
+  name       String
+  itemTypeId String         @default("MESSAGE")
+  itemType   ServerItemType @relation(fields: [itemTypeId], references: [id])
+  server     Server         @relation(fields: [serverId], references: [id])
+  serverId   Int
+}
+
+model ServerItemType {
+  id          String       @id
+  serverItems ServerItem[]
 }
