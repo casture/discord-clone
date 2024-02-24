@@ -53,7 +53,10 @@ export function CreateServerDialog () {
     const isLoading = form.formState.isSubmitting
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+        await fetch('/api/server', {
+            method: 'POST',
+            body: JSON.stringify(values)
+        })
     }
 
     if (!isMounted) {
