@@ -35,8 +35,13 @@ const formSchema = z.object({
     })
 })
 
-export function CreateServerDialog () {
+interface CreateServerDialogParams {
+    refreshParent?: () => void
+} 
+
+export function CreateServerDialog ({ refreshParent }: CreateServerDialogParams ) {
     const [isMounted, setIsMounted] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         setIsMounted(true)
@@ -53,10 +58,14 @@ export function CreateServerDialog () {
     const isLoading = form.formState.isSubmitting
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        await fetch('/api/server', {
+        const response = await fetch('/api/server', {
             method: 'POST',
             body: JSON.stringify(values)
         })
+        if (response.ok) {
+            setIsOpen(false)
+            refreshParent && refreshParent()
+        }
     }
 
     if (!isMounted) {
@@ -64,8 +73,8 @@ export function CreateServerDialog () {
     }
 
     return (
-        <Dialog>
-            <DialogTrigger className="rounded-3xl bg-zinc-800 hover:rounded-xl text-2xl h-[45px] text-center leading-2 text-green-400 hover:bg-green-400 hover:text-white transition-all">
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger className="rounded-3xl bg-zinc-800 hover:rounded-xl text-2xl size-[50px] text-center leading-2 text-green-400 hover:bg-green-400 hover:text-white transition-all">
                 +
             </DialogTrigger>
             <DialogContent>
